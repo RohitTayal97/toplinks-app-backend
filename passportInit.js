@@ -29,7 +29,7 @@ const passportInit = () => {
           stringify_ids: true,
           count: 100,
         },
-        async (err, data, response) => {
+        (err, data, response) => {
           ids = data.ids;
           cursor = data.next_cursor_str;
         }
