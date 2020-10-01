@@ -18,7 +18,7 @@ const passportInit = () => {
 
     T.get(
       "search/tweets",
-      { q: "-(url: )", count: 100, result_type: "recent" },
+      { q: "has:links", count: 100, result_type: "recent" },
       function (err, data, response) {
         console.log("########tweets", data);
       }
