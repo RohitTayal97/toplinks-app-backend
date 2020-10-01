@@ -58,12 +58,13 @@ const passportInit = () => {
           result_type: "recent",
         },
         async (err, data, response) => {
-          data.map((tweetObj) => {
-            await new Tweet({
-              tweet_id: tweetObj.id_str,
-              text: tweetObj.text,
-              author_name: tweetObj.user.screen_name,
-            }).save();
+          console.log('####tweets', data);
+          // data.map((tweetObj) => {
+          //   await new Tweet({
+          //     tweet_id: tweetObj.id_str,
+          //     text: tweetObj.text,
+          //     author_name: tweetObj.user.screen_name,
+          //   }).save();
           });
         }
       );
