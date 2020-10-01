@@ -6,14 +6,14 @@ const passportInit = () => {
   passport.serializeUser((user, cb) => cb(null, user));
   passport.deserializeUser((obj, cb) => cb(null, obj));
 
-  const callback = (accessToken, tokenSecret, profile, cb) => {
+  const callback = async (accessToken, tokenSecret, profile, cb) => {
     var Twit = require("twit");
     var T = new Twit({
       consumer_key: `${process.env.TWITTER_CONSUMER_KEY}`,
       consumer_secret: `${process.env.TWITTER_CONSUMER_SECRET}`,
       access_token: accessToken,
       access_token_secret: tokenSecret,
-      timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+      // timeout_ms: 60 * 1000,
     });
     const user = profile.username;
     let cursor = "-1";
@@ -35,17 +35,17 @@ const passportInit = () => {
         }
       );
 
-      // T.get(
-      //   "users/lookup",
-      //   {
-      //     user_id: ids,
-      //   },
-      //   async (err, data, response) => {
-      //     ids = data.map((userObj) => {
-      //       return userObj.screen_name;
-      //     });
-      //   }
-      // );
+      T.get(
+        "users/lookup",
+        {
+          user_id: ids,
+        },
+        (err, data, response) => {
+          ids = data.map((userObj) => {
+            return userObj.screen_name;
+          });
+        }
+      );
     }
     // ids.push(user);
 
