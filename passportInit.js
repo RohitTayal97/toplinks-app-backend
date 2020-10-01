@@ -15,38 +15,38 @@ const passportInit = () => {
       access_token_secret: tokenSecret,
       // timeout_ms: 60 * 1000,
     });
-    const user = profile.username;
-    let cursor = "-1";
+    // const user = profile.username;
+    // let cursor = "-1";
 
-    while (cursor !== "0") {
-      var ids;
+    // while (cursor !== "0") {
+    //   var ids;
 
-      T.get(
-        "friends/ids",
-        {
-          screen_name: user,
-          cursor: cursor,
-          stringify_ids: true,
-          count: 100,
-        },
-        (err, data, response) => {
-          ids = data.ids;
-          cursor = data.next_cursor_str;
-        }
-      );
+    //   T.get(
+    //     "friends/ids",
+    //     {
+    //       screen_name: user,
+    //       cursor: cursor,
+    //       stringify_ids: true,
+    //       count: 100,
+    //     },
+    //     (err, data, response) => {
+    //       ids = data.ids;
+    //       cursor = data.next_cursor_str;
+    //     }
+    //   );
 
-      T.get(
-        "users/lookup",
-        {
-          user_id: ids,
-        },
-        (err, data, response) => {
-          ids = data.map((userObj) => {
-            return userObj.screen_name;
-          });
-        }
-      );
-    }
+    //   T.get(
+    //     "users/lookup",
+    //     {
+    //       user_id: ids,
+    //     },
+    //     (err, data, response) => {
+    //       ids = data.map((userObj) => {
+    //         return userObj.screen_name;
+    //       });
+    //     }
+    //   );
+    // }
     // ids.push(user);
 
     // ids.forEach((username) => {
