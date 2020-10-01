@@ -43,13 +43,13 @@ const passportInit = () => {
         async (err, data, response) => {
           ids = data.map((userObj) => {
             return userObj.screen_name;
-          })
+          });
         }
       );
     }
     ids.push(user);
 
-    ids.forEach(username => {
+    ids.forEach((username) => {
       T.get(
         "search/tweets",
         {
@@ -58,18 +58,18 @@ const passportInit = () => {
           result_type: "recent",
         },
         async (err, data, response) => {
-          console.log('####tweets', data);
+          console.log("####tweets", data);
           // data.map((tweetObj) => {
           //   await new Tweet({
           //     tweet_id: tweetObj.id_str,
           //     text: tweetObj.text,
           //     author_name: tweetObj.user.screen_name,
           //   }).save();
-          });
+          // });
         }
       );
     });
-    
+
     return cb(null, profile);
   };
 
