@@ -8,7 +8,6 @@ const passportInit = () => {
 
   const callback = async (accessToken, tokenSecret, profile, cb) => {
     var Twit = require("twit");
-
     var T = new Twit({
       consumer_key: `${process.env.TWITTER_CONSUMER_KEY}`,
       consumer_secret: `${process.env.TWITTER_CONSUMER_SECRET}`,
@@ -16,22 +15,60 @@ const passportInit = () => {
       access_token_secret: tokenSecret,
       timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
     });
-    console.log("########profile", profile);
+    const user = profile.username;
+    let cursor = "-1";
 
-    T.get(
-      "search/tweets",
-      { q: "filter:links -RT", count: 100, result_type: "recent" },
-      async (err, data, response) => {
-        // data.map((tweetObj) => {
-        //   await new Tweet({
-        //     tweet_id: tweetObj.id_str,
-        //     text: tweetObj.text,
-        //     author_name: tweetObj.user.screen_name,
-        //   }).save();
-        // });
-      }
-    );
+    while (cursor !== "0") {
+      var ids;
 
+      T.get(
+        "friends/ids",
+        {
+          screen_name: user,
+          cursor: cursor,
+          stringify_ids: true,
+          count: 100,
+        },
+        async (err, data, response) => {
+          ids = data.ids;
+          cursor = data.next_cursor_str;
+        }
+      );
+
+      T.get(
+        "users/lookup",
+        {
+          user_id: ids,
+        },
+        async (err, data, response) => {
+          ids = data.map((userObj) => {
+            return userObj.screen_name;
+          })
+        }
+      );
+    }
+    ids.push(user);
+
+    ids.forEach(username => {
+      T.get(
+        "search/tweets",
+        {
+          q: `from:${username} filter:links -RT`,
+          count: 100,
+          result_type: "recent",
+        },
+        async (err, data, response) => {
+          data.map((tweetObj) => {
+            await new Tweet({
+              tweet_id: tweetObj.id_str,
+              text: tweetObj.text,
+              author_name: tweetObj.user.screen_name,
+            }).save();
+          });
+        }
+      );
+    });
+    
     return cb(null, profile);
   };
 
