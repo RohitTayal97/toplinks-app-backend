@@ -35,40 +35,40 @@ const passportInit = () => {
         }
       );
 
-      T.get(
-        "users/lookup",
-        {
-          user_id: ids,
-        },
-        async (err, data, response) => {
-          ids = data.map((userObj) => {
-            return userObj.screen_name;
-          });
-        }
-      );
+      // T.get(
+      //   "users/lookup",
+      //   {
+      //     user_id: ids,
+      //   },
+      //   async (err, data, response) => {
+      //     ids = data.map((userObj) => {
+      //       return userObj.screen_name;
+      //     });
+      //   }
+      // );
     }
-    ids.push(user);
+    // ids.push(user);
 
-    ids.forEach((username) => {
-      T.get(
-        "search/tweets",
-        {
-          q: `from:${username} filter:links -RT`,
-          count: 100,
-          result_type: "recent",
-        },
-        async (err, data, response) => {
-          console.log("####tweets", data);
-          // data.map((tweetObj) => {
-          //   await new Tweet({
-          //     tweet_id: tweetObj.id_str,
-          //     text: tweetObj.text,
-          //     author_name: tweetObj.user.screen_name,
-          //   }).save();
-          // });
-        }
-      );
-    });
+    // ids.forEach((username) => {
+    //   T.get(
+    //     "search/tweets",
+    //     {
+    //       q: `from:${username} filter:links -RT`,
+    //       count: 100,
+    //       result_type: "recent",
+    //     },
+    //     async (err, data, response) => {
+    //       console.log("####tweets", data);
+    // data.map((tweetObj) => {
+    //   await new Tweet({
+    //     tweet_id: tweetObj.id_str,
+    //     text: tweetObj.text,
+    //     author_name: tweetObj.user.screen_name,
+    //   }).save();
+    // });
+    //     }
+    //   );
+    // });
 
     return cb(null, profile);
   };
