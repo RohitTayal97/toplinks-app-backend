@@ -6,7 +6,7 @@ const passportInit = () => {
   passport.serializeUser((user, cb) => cb(null, user));
   passport.deserializeUser((obj, cb) => cb(null, obj));
 
-  const callback = async (accessToken, tokenSecret, profile, cb) => {
+  const callback = (accessToken, tokenSecret, profile, cb) => {
     var Twit = require("twit");
     var T = new Twit({
       consumer_key: `${process.env.TWITTER_CONSUMER_KEY}`,
