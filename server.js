@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-// const path = require("path");
+const mongoose = require("mongoose");
+const MongoStore = require("connect-mongo")(session);
 const passport = require("passport");
 const session = require("express-session");
 const cors = require("cors");
@@ -9,6 +10,10 @@ const authRoutes = require("./routes/auth");
 const passportInit = require("./passportInit");
 const app = express();
 const server = require("http").createServer(app);
+
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true }, () => {
+  console.log("connected to mongo db");
+});
 
 app.use(express.json());
 app.use(passport.initialize());
@@ -23,6 +28,7 @@ app.use(
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
     resave: true,
     saveUninitialized: true,
   })

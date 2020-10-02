@@ -7,69 +7,77 @@ const passportInit = () => {
   passport.deserializeUser((obj, cb) => cb(null, obj));
 
   const callback = async (accessToken, tokenSecret, profile, cb) => {
-    var Twit = require("twit");
-    var T = new Twit({
-      consumer_key: `${process.env.TWITTER_CONSUMER_KEY}`,
-      consumer_secret: `${process.env.TWITTER_CONSUMER_SECRET}`,
-      access_token: accessToken,
-      access_token_secret: tokenSecret,
-      // timeout_ms: 60 * 1000,
-    });
-    // const user = profile.username;
-    // let cursor = "-1";
+    try {
+      var Twit = require("twit");
+      var T = new Twit({
+        consumer_key: `${process.env.TWITTER_CONSUMER_KEY}`,
+        consumer_secret: `${process.env.TWITTER_CONSUMER_SECRET}`,
+        access_token: accessToken,
+        access_token_secret: tokenSecret,
+        // timeout_ms: 60 * 1000,
+      });
+      const user = profile.username;
+      let ids = [];
+      let allids = [];
+      let cursor = "-1";
 
-    // while (cursor !== "0") {
-    //   var ids;
+      while (cursor !== "0") {
+        T.get(
+          "friends/ids",
+          {
+            screen_name: user,
+            cursor: cursor,
+            stringify_ids: true,
+            count: 100,
+          },
+          (err, data, response) => {
+            ids = data.ids;
+            cursor = data.next_cursor_str;
+          }
+        );
 
-    //   T.get(
-    //     "friends/ids",
-    //     {
-    //       screen_name: user,
-    //       cursor: cursor,
-    //       stringify_ids: true,
-    //       count: 100,
-    //     },
-    //     (err, data, response) => {
-    //       ids = data.ids;
-    //       cursor = data.next_cursor_str;
-    //     }
-    //   );
+        ids = ids.map(id => BigInt(id));
 
-    //   T.get(
-    //     "users/lookup",
-    //     {
-    //       user_id: ids,
-    //     },
-    //     (err, data, response) => {
-    //       ids = data.map((userObj) => {
-    //         return userObj.screen_name;
-    //       });
-    //     }
-    //   );
-    // }
-    // ids.push(user);
+        T.get(
+          "users/lookup",
+          {
+            user_id: ids,
+          },
+          (err, data, response) => {
+            ids = data.map((userObj) => {
+              return userObj.screen_name;
+            });
+          }
+        );
+      }
+      allids = [...allids, ...ids];
+      allids.push(user);
 
-    // ids.forEach((username) => {
-    //   T.get(
-    //     "search/tweets",
-    //     {
-    //       q: `from:${username} filter:links -RT`,
-    //       count: 100,
-    //       result_type: "recent",
-    //     },
-    //     async (err, data, response) => {
-    //       console.log("####tweets", data);
-    // data.map((tweetObj) => {
-    //   await new Tweet({
-    //     tweet_id: tweetObj.id_str,
-    //     text: tweetObj.text,
-    //     author_name: tweetObj.user.screen_name,
-    //   }).save();
-    // });
-    //     }
-    //   );
-    // });
+      allids.forEach((username) => {
+        T.get(
+          "search/tweets",
+          {
+            q: `from:${username} filter:links -RT`,
+            count: 100,
+            result_type: "recent",
+          },
+          (err, data, response) => {
+            console.log("####tweets", data);
+            data.map((tweetObj) => {
+              await new Tweet({
+                tweet_id: tweetObj.id_str,
+                text: tweetObj.text,
+                author_name: tweetObj.user.screen_name,
+              }).save();
+            });
+          }
+        );
+      });
 
+    } catch(error) {
+      console.log(error);
+    }
+    
     return cb(null, profile);
   };
 
