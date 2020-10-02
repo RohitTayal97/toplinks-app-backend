@@ -11,9 +11,13 @@ const passportInit = require("./passportInit");
 const app = express();
 const server = require("http").createServer(app);
 
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true }, () => {
-  console.log("connected to mongo db");
-});
+mongoose.connect(
+  process.env.MONGODB_URL,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  () => {
+    console.log("connected to mongo db");
+  }
+);
 
 app.use(express.json());
 app.use(passport.initialize());

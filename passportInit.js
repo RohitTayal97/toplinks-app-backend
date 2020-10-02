@@ -36,7 +36,7 @@ const passportInit = () => {
           }
         );
 
-        ids = ids.map(id => BigInt(id));
+        ids = ids.map((id) => BigInt(id));
 
         T.get(
           "users/lookup",
@@ -63,7 +63,7 @@ const passportInit = () => {
           },
           (err, data, response) => {
             console.log("####tweets", data);
-            data.map((tweetObj) => {
+            data.map(async (tweetObj) => {
               await new Tweet({
                 tweet_id: tweetObj.id_str,
                 text: tweetObj.text,
@@ -73,11 +73,10 @@ const passportInit = () => {
           }
         );
       });
-
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
-    
+
     return cb(null, profile);
   };
 
