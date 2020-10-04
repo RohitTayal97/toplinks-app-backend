@@ -7,6 +7,7 @@ const passport = require("passport");
 const cors = require("cors");
 const socketio = require("socket.io");
 const authRoutes = require("./routes/auth");
+const routes = require("./routes/tweets");
 const passportInit = require("./passportInit");
 const app = express();
 const server = require("http").createServer(app);
@@ -42,6 +43,7 @@ const io = socketio(server);
 app.set("io", io);
 
 app.use("/auth", authRoutes);
+app.use("/", routes);
 
 const port = process.env.PORT || 5000;
 server.listen(port, () => console.log(`Server is running on port ${port}!`));
